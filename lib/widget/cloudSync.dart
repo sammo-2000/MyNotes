@@ -25,7 +25,6 @@ class SyncToCloud extends StatelessWidget {
       icon: Icons.cloud,
       onClick: () {
         cloudProvider.setIsSync(true);
-        FirebaseAuth.instance.signOut();
       },
       color: Colors.green,
     );

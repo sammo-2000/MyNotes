@@ -70,14 +70,19 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(isLogin ? 'L O G I N' : 'S I G N   U P')),
+      appBar: AppBar(
+          title: Text(isLogin ? 'L O G I N' : 'S I G N   U P'),
+          automaticallyImplyLeading: false),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Center(
           child: Column(
             children: [
               CustomInput(controller: emailController, label: 'Email'),
-              CustomInput(controller: passwordController, label: 'Password', obscureText: true),
+              CustomInput(
+                  controller: passwordController,
+                  label: 'Password',
+                  obscureText: true),
               errorMessege != "" && errorMessege != null
                   ? CustomButton(
                       label: errorMessege.toString(),
