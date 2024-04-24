@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:notes/models/note.dart';
 import 'package:notes/screens/addNoteScreen.dart';
-import 'package:notes/services/dbConnect.dart';
 import 'package:notes/widget/note/listNotes.dart';
 
 class ListNoteScreen extends StatelessWidget {
@@ -10,12 +8,16 @@ class ListNoteScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('M Y   N O T E S')),
+      appBar: AppBar(
+          title: const Text('M Y   N O T E S'),
+          automaticallyImplyLeading: false),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const CreateNoteScreen()),
+            MaterialPageRoute(
+              builder: (context) => const CreateNoteScreen(),
+            ),
           );
         },
         backgroundColor: Colors.blue,

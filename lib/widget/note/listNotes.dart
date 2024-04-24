@@ -4,9 +4,14 @@ import 'package:notes/screens/viewNoteScreen.dart';
 import 'package:notes/services/dbConnect.dart';
 import 'package:notes/widget/note/cardNote.dart';
 
-class ListNotes extends StatelessWidget {
+class ListNotes extends StatefulWidget {
   const ListNotes({super.key});
 
+  @override
+  State<ListNotes> createState() => _ListNotesState();
+}
+
+class _ListNotesState extends State<ListNotes> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Note>?>(
@@ -19,9 +24,16 @@ class ListNotes extends StatelessWidget {
         } else {
           List<Note>? noteList = snapshot.data;
           if (noteList == null || noteList.isEmpty) {
-            return const Text(
-              'No notes found, add some by click + bottom right',
-              textAlign: TextAlign.center,
+            return const Center(
+              child: Text(
+                'N O   N O T E S   F O U N D',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 30.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             );
           }
           return ListView.builder(

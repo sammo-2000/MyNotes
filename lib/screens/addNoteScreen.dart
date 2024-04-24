@@ -10,7 +10,6 @@ import 'package:notes/widget/form/text.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:uuid/uuid.dart';
 
 class CreateNoteScreen extends StatefulWidget {
   const CreateNoteScreen({super.key});
@@ -33,11 +32,11 @@ class _CreateNoteScreenState extends State<CreateNoteScreen> {
     if (noteController.text.isEmpty) throw 'Note is required';
   }
 
-  void saveImage() async {
+  Future<void> saveImage() async {
     if (imageFile == null) return;
-    Uuid uuid = const Uuid();
+    DateTime now = DateTime.now();
     Directory appDocDir = await getApplicationDocumentsDirectory();
-    String imagePath = '${appDocDir.path}/$uuid';
+    String imagePath = '${appDocDir.path}/$now';
     File(imageFile!.path).copy(imagePath);
     filePath = imagePath;
   }
@@ -45,7 +44,7 @@ class _CreateNoteScreenState extends State<CreateNoteScreen> {
   void formSubmit() async {
     try {
       validateFields();
-      saveImage();
+      await saveImage();
 
       Note newNote = Note(
         title: titleController.text,
@@ -54,22 +53,28 @@ class _CreateNoteScreenState extends State<CreateNoteScreen> {
         reminderDateTime: reminderDateTime,
         createAt: DateTime.now(),
       );
-
       MyDatabase.addNote(newNote);
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const ListNoteScreen(),
-        ),
-      );
+      redirect();
     } catch (e) {
-      CustomDialog.show(
-        context,
-        'Error',
-        e.toString(),
-      );
+      showError(e);
     }
+  }
+
+  void showError(Object e) {
+    CustomDialog.show(
+      context,
+      'Error',
+      e.toString(),
+    );
+  }
+
+  void redirect() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const ListNoteScreen(),
+      ),
+    );
   }
 
   void pickImage() {

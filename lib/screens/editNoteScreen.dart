@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:notes/models/note.dart';
 
 class EditNoteScreen extends StatefulWidget {
-  const EditNoteScreen({super.key});
+  final Note note;
+  const EditNoteScreen({
+    super.key,
+    required this.note,
+  });
 
   @override
   State<EditNoteScreen> createState() => _EditNoteScreenState();
