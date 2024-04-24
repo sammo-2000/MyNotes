@@ -114,7 +114,8 @@ class ViewNoteScreen extends StatelessWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => EditNoteScreen(note: myNote)),
+            MaterialPageRoute(
+                builder: (context) => EditNoteScreen(note: myNote)),
           );
         },
         backgroundColor: Colors.blue,
@@ -182,8 +183,13 @@ Widget showDateTime(DateTime? time, IconData icon, String noTimeText) {
 Widget showImage(String? filePath) {
   return filePath == null
       ? const SizedBox()
-      : Image.file(
-          File(filePath!),
-          height: 300,
+      : Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.file(
+              File(filePath!),
+              height: 300,
+            ),
+          ],
         );
 }
