@@ -77,7 +77,7 @@ class _SignInScreenState extends State<SignInScreen> {
           child: Column(
             children: [
               CustomInput(controller: emailController, label: 'Email'),
-              CustomInput(controller: passwordController, label: 'Password'),
+              CustomInput(controller: passwordController, label: 'Password', obscureText: true),
               errorMessege != "" && errorMessege != null
                   ? CustomButton(
                       label: errorMessege.toString(),

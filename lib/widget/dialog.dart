@@ -36,15 +36,12 @@ class CustomDialog {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              style: TextButton.styleFrom(
-                // TODO
-                // primary: Colors.blue,
-              ),
               child: const Text(
                 'OK',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
+                  color: Colors.blue,
                 ),
               ),
             ),

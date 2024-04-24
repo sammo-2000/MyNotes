@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:notes/screens/addNoteScreen.dart';
-import 'package:notes/widget/cloudSync.dart';
+import 'package:notes/screens/settingsScreen.dart';
+import 'package:notes/widget/button.dart';
 import 'package:notes/widget/note/listNotes.dart';
 
 class ListNoteScreen extends StatelessWidget {
@@ -24,12 +25,24 @@ class ListNoteScreen extends StatelessWidget {
         backgroundColor: Colors.blue,
         child: const Icon(Icons.add, color: Colors.white),
       ),
-      body: const Padding(
-        padding: EdgeInsets.all(8.0),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            SyncToCloud(),
-            Expanded(child: ListNotes()),
+            CustomButton(
+              label: 'Settings',
+              icon: Icons.settings,
+              color: Colors.black,
+              onClick: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SettingScreen(),
+                  ),
+                );
+              },
+            ),
+            const Expanded(child: ListNotes()),
           ],
         ),
       ),

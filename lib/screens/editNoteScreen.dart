@@ -244,15 +244,10 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
               CustomInput(controller: titleController, label: 'Title'),
               CustomText(controller: noteController, label: 'Note'),
               showImage(filePath, imageFile),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  CustomButton(
-                    onClick: formSubmit,
-                    label: 'Edit',
-                    icon: Icons.edit,
-                  ),
-                ],
+              CustomButton(
+                onClick: formSubmit,
+                label: 'Edit',
+                icon: Icons.edit,
               ),
             ],
           ),

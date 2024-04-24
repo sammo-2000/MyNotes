@@ -215,21 +215,14 @@ class _CreateNoteScreenState extends State<CreateNoteScreen> {
               ),
               CustomInput(controller: titleController, label: 'Title'),
               CustomText(controller: noteController, label: 'Note'),
-              imageFile == null
-                  ? const SizedBox()
-                  : Image.file(
-                      File(imageFile!.path),
-                      height: 300,
-                    ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  CustomButton(
-                    onClick: formSubmit,
-                    label: 'Add',
-                    icon: Icons.add,
-                  ),
-                ],
+              if (imageFile == null)
+                const SizedBox()
+              else
+                Image.file(File(imageFile!.path), height: 300),
+              CustomButton(
+                onClick: formSubmit,
+                label: 'Add',
+                icon: Icons.add,
               ),
             ],
           ),
