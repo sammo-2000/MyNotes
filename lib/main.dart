@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:notes/provider/cloudProvider.dart';
 import 'package:notes/provider/notesProvider.dart';
 import 'package:notes/screens/listNoteScreen.dart';
 import 'package:provider/provider.dart';
@@ -12,8 +13,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => NoteProvider(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<NoteProvider>(
+            create: (context) => NoteProvider()),
+        ChangeNotifierProvider<CloudProvider>(
+            create: (context) => CloudProvider()),
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         home: const ListNoteScreen(),

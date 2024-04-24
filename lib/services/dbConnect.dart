@@ -32,7 +32,6 @@ class MyDatabase {
   // Create note
   static Future<int> addNote(Note note) async {
     final db = await getDB();
-    print('New Data Inserted');
     return await db.insert(
       'notes',
       note.toMap(),
