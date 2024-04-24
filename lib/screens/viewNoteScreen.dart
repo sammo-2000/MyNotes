@@ -44,7 +44,8 @@ class ViewNoteScreen extends StatelessWidget {
                 Navigator.of(context).pop();
               },
               style: TextButton.styleFrom(
-                primary: Colors.blue,
+                // TODO
+                // primary: Colors.blue,
               ),
               child: const Text(
                 'Cancel',
@@ -59,7 +60,8 @@ class ViewNoteScreen extends StatelessWidget {
                 deleteNote(context);
               },
               style: TextButton.styleFrom(
-                primary: Colors.red,
+                // TODO
+                // primary: Colors.red,
               ),
               child: const Text(
                 'Delete',

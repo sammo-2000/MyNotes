@@ -37,7 +37,8 @@ class CustomDialog {
                 Navigator.of(context).pop();
               },
               style: TextButton.styleFrom(
-                primary: Colors.blue,
+                // TODO
+                // primary: Colors.blue,
               ),
               child: const Text(
                 'OK',

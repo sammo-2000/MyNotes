@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:notes/provider/cloudProvider.dart';
 import 'package:notes/widget/button.dart';
@@ -24,6 +25,7 @@ class SyncToCloud extends StatelessWidget {
       icon: Icons.cloud,
       onClick: () {
         cloudProvider.setIsSync(true);
+        FirebaseAuth.instance.signOut();
       },
       color: Colors.green,
     );

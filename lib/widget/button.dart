@@ -7,12 +7,12 @@ class CustomButton extends StatelessWidget {
   final Color? color;
 
   const CustomButton({
-    super.key,
+    Key? key,
     required this.label,
     required this.icon,
     required this.onClick,
     this.color,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -33,12 +33,15 @@ class CustomButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              label,
-              style: const TextStyle(
-                fontSize: 16.0,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+            Flexible( // Wrap the Text widget with Flexible
+              child: Text(
+                label,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
             ),
             const SizedBox(width: 4.0),
@@ -49,3 +52,4 @@ class CustomButton extends StatelessWidget {
     );
   }
 }
+
