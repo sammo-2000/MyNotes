@@ -20,21 +20,24 @@ class _ListNotesState extends State<ListNotes> {
   @override
   void initState() {
     super.initState();
-    // Move the initialization logic here
     notesProvider = Provider.of<NoteProvider>(context, listen: false);
     setStateInitial();
   }
 
   void setStateInitial() {
     MyDatabase.getAllNotes().then((notes) {
-      if (notes != null) {
-        setState(() {
+      setState(() {
+        if (notes != null && notes.isNotEmpty) {
           noteList = notes;
           notesProvider.setNotes(noteList!);
-        });
-      }
+        } else {
+          noteList = [];
+          notesProvider.setNotes(noteList!);
+        }
+      });
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -72,48 +75,49 @@ class _ListNotesState extends State<ListNotes> {
         );
       },
     );
-
-    // return FutureBuilder<List<Note>?>(
-    //   future: MyDatabase.getAllNotes(),
-    //   builder: (context, snapshot) {
-    //     if (snapshot.connectionState == ConnectionState.waiting) {
-    //       return const CircularProgressIndicator();
-    //     } else if (snapshot.hasError) {
-    //       return Text('Error: ${snapshot.error}');
-    //     } else {
-    //       List<Note>? noteList = snapshot.data;
-    //       if (noteList == null || noteList.isEmpty) {
-    //         return const Center(
-    //           child: Text(
-    //             'N O   N O T E S   F O U N D',
-    //             textAlign: TextAlign.center,
-    //             style: TextStyle(
-    //               color: Colors.grey,
-    //               fontSize: 30.0,
-    //               fontWeight: FontWeight.bold,
-    //             ),
-    //           ),
-    //         );
-    //       }
-    //       return ListView.builder(
-    //         itemCount: noteList.length,
-    //         itemBuilder: (context, index) {
-    //           Note note = noteList[index];
-    //           return GestureDetector(
-    //             onTap: () {
-    //               Navigator.push(
-    //                 context,
-    //                 MaterialPageRoute(
-    //                   builder: (context) => ViewNoteScreen(myNote: note),
-    //                 ),
-    //               );
-    //             },
-    //             child: NoteCard(note: note),
-    //           );
-    //         },
-    //       );
-    //     }
-    //   },
-    // );
   }
 }
+
+
+// return FutureBuilder<List<Note>?>(
+//   future: MyDatabase.getAllNotes(),
+//   builder: (context, snapshot) {
+//     if (snapshot.connectionState == ConnectionState.waiting) {
+//       return const CircularProgressIndicator();
+//     } else if (snapshot.hasError) {
+//       return Text('Error: ${snapshot.error}');
+//     } else {
+//       List<Note>? noteList = snapshot.data;
+//       if (noteList == null || noteList.isEmpty) {
+//         return const Center(
+//           child: Text(
+//             'N O   N O T E S   F O U N D',
+//             textAlign: TextAlign.center,
+//             style: TextStyle(
+//               color: Colors.grey,
+//               fontSize: 30.0,
+//               fontWeight: FontWeight.bold,
+//             ),
+//           ),
+//         );
+//       }
+//       return ListView.builder(
+//         itemCount: noteList.length,
+//         itemBuilder: (context, index) {
+//           Note note = noteList[index];
+//           return GestureDetector(
+//             onTap: () {
+//               Navigator.push(
+//                 context,
+//                 MaterialPageRoute(
+//                   builder: (context) => ViewNoteScreen(myNote: note),
+//                 ),
+//               );
+//             },
+//             child: NoteCard(note: note),
+//           );
+//         },
+//       );
+//     }
+//   },
+// );
