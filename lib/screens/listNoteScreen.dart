@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:notes/screens/addNoteScreen.dart';
+import 'package:notes/widget/cloudSync.dart';
 import 'package:notes/widget/note/listNotes.dart';
 
 class ListNoteScreen extends StatelessWidget {
@@ -25,7 +26,12 @@ class ListNoteScreen extends StatelessWidget {
       ),
       body: const Padding(
         padding: EdgeInsets.all(8.0),
-        child: ListNotes(),
+        child: Column(
+          children: [
+            SyncToCloud(),
+            Expanded(child: ListNotes()),
+          ],
+        ),
       ),
     );
   }
