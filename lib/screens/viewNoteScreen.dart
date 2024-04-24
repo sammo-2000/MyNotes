@@ -181,15 +181,19 @@ Widget showDateTime(DateTime? time, IconData icon, String noTimeText) {
 }
 
 Widget showImage(String? filePath) {
-  return filePath == null
-      ? const SizedBox()
-      : Row(
+  if (filePath == null) {
+    return const SizedBox();
+  } else {
+    return Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.file(
-              File(filePath!),
-              height: 300,
+            Expanded(
+              child: Image.file(
+                File(filePath!),
+                height: 300,
+              ),
             ),
           ],
         );
+  }
 }

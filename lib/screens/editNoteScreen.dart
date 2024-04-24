@@ -35,7 +35,9 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
     titleController.text = widget.note.title;
     noteController.text = widget.note.note;
     widget.note.filePath != null ? filePath = widget.note.filePath : "";
-    widget.note.reminderDateTime != null ? reminderDateTime = widget.note.reminderDateTime : "";
+    widget.note.reminderDateTime != null
+        ? reminderDateTime = widget.note.reminderDateTime
+        : "";
     createAt = widget.note.createAt;
     widget.note.editAt != null ? editAt = widget.note.editAt : "";
   }
@@ -48,7 +50,7 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
 
   Future<void> updateImage() async {
     if (imageFile == null) return;
-    if (filePath != null ) await deleteImage(filePath!);
+    if (filePath != null) await deleteImage(filePath!);
     DateTime now = DateTime.now();
     Directory appDocDir = await getApplicationDocumentsDirectory();
     String imagePath = '${appDocDir.path}/$now';
@@ -137,7 +139,7 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
 
   Future fromGallery() async {
     final returnedImage =
-    await ImagePicker().pickImage(source: ImageSource.gallery);
+        await ImagePicker().pickImage(source: ImageSource.gallery);
     if (returnedImage == null) return;
 
     setState(() {
@@ -148,7 +150,7 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
 
   Future fromCamera() async {
     final returnedImage =
-    await ImagePicker().pickImage(source: ImageSource.camera);
+        await ImagePicker().pickImage(source: ImageSource.camera);
     if (returnedImage == null) return;
     setState(() {
       imageFile = returnedImage;
@@ -179,19 +181,19 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
   }
 
   Future<DateTime?> pickDate(DateTime now) => showDatePicker(
-    context: context,
-    firstDate: DateTime(now.year),
-    lastDate: DateTime(2200),
-    initialDate: DateTime(now.year.toInt()),
-  );
+        context: context,
+        firstDate: DateTime(now.year),
+        lastDate: DateTime(2200),
+        initialDate: DateTime(now.year.toInt()),
+      );
 
   Future<TimeOfDay?> pickTime(DateTime now) => showTimePicker(
-    context: context,
-    initialTime: TimeOfDay(
-      hour: now.hour,
-      minute: now.minute,
-    ),
-  );
+        context: context,
+        initialTime: TimeOfDay(
+          hour: now.hour,
+          minute: now.minute,
+        ),
+      );
 
   // Widgets
   @override
@@ -232,21 +234,16 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
                     reminderDateTime == null
                         ? const Text('No reminder set')
                         : Text(
-                      DateFormat('MMMM dd, yyyy - hh:mm a')
-                          .format(reminderDateTime!)
-                          .toString(),
-                    ),
+                            DateFormat('MMMM dd, yyyy - hh:mm a')
+                                .format(reminderDateTime!)
+                                .toString(),
+                          ),
                   ],
                 ),
               ),
               CustomInput(controller: titleController, label: 'Title'),
               CustomText(controller: noteController, label: 'Note'),
-              imageFile == null
-                  ? const SizedBox()
-                  : Image.file(
-                File(imageFile!.path),
-                height: 300,
-              ),
+              showImage(filePath, imageFile),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -261,6 +258,34 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+Widget showImage(String? filePath, XFile? imageFile) {
+  if (filePath == null && imageFile == null) {
+    // Display nothing if there are no images
+    return const SizedBox();
+  } else if (filePath != null && imageFile == null) {
+    // Display older images if it exists and no new image is selected
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Expanded(
+          child: Image.file(
+            File(filePath),
+            height: 300,
+          ),
+        ),
+      ],
+    );
+  } else {
+    // Display the new image
+    return imageFile == null
+        ? const SizedBox()
+        : Image.file(
+      File(imageFile.path),
+      height: 300,
     );
   }
 }
