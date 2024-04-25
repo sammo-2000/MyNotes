@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:notes/provider/cloudProvider.dart';
+import 'package:notes/provider/notesProvider.dart';
 import 'package:notes/screens/addNoteScreen.dart';
 import 'package:notes/screens/settingsScreen.dart';
 import 'package:notes/widget/button.dart';
-import 'package:notes/widget/note/listNotes.dart';
+import 'package:notes/widget/note/listNotesFireBase.dart';
+import 'package:notes/widget/note/listNotesLocal.dart';
+import 'package:provider/provider.dart';
 
 class ListNoteScreen extends StatelessWidget {
   const ListNoteScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final cloudProvider = Provider.of<CloudProvider>(context);
     return Scaffold(
       appBar: AppBar(
           title: const Text('M Y   N O T E S'),
@@ -42,7 +47,9 @@ class ListNoteScreen extends StatelessWidget {
                 );
               },
             ),
-            const Expanded(child: ListNotes()),
+            cloudProvider.isSync == false
+                ? const Expanded(child: ListNotes())
+                : const Expanded(child: ListNoteFireBase()),
           ],
         ),
       ),

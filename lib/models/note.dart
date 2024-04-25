@@ -1,4 +1,5 @@
 class Note {
+  String? uid;
   final int? id;
   final String title;
   final String note;
@@ -8,6 +9,7 @@ class Note {
   final DateTime? editAt;
 
   Note({
+    this.uid,
     this.id,
     required this.title,
     required this.note,

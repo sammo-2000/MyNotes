@@ -7,12 +7,12 @@ class CustomButton extends StatelessWidget {
   final Color? color;
 
   const CustomButton({
-    Key? key,
+    super.key,
     required this.label,
     required this.icon,
     required this.onClick,
     this.color,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +33,7 @@ class CustomButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Flexible( // Wrap the Text widget with Flexible
+            Flexible(
               child: Text(
                 label,
                 textAlign: TextAlign.center,

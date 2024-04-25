@@ -14,7 +14,7 @@ class MyDatabase {
       reminderDateTime TEXT,
       createAt TEXT,
       editAt TEXT
-    )
+    );
   ''';
 
   // Connect to DB

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:notes/models/note.dart';
+import 'package:notes/provider/cloudProvider.dart';
 import 'package:notes/screens/listNoteScreen.dart';
 import 'package:notes/services/dbConnect.dart';
 import 'package:notes/widget/button.dart';
@@ -10,6 +11,7 @@ import 'package:notes/widget/form/text.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 
 class CreateNoteScreen extends StatefulWidget {
   const CreateNoteScreen({super.key});
@@ -41,7 +43,7 @@ class _CreateNoteScreenState extends State<CreateNoteScreen> {
     filePath = imagePath;
   }
 
-  void formSubmit() async {
+  Future<void> formSubmit(bool isSyncToCloud) async {
     try {
       validateFields();
       await saveImage();
@@ -53,10 +55,14 @@ class _CreateNoteScreenState extends State<CreateNoteScreen> {
         reminderDateTime: reminderDateTime,
         createAt: DateTime.now(),
       );
+
       MyDatabase.addNote(newNote);
+
       redirect();
+      return;
     } catch (e) {
       showError(e);
+      return;
     }
   }
 
@@ -170,6 +176,7 @@ class _CreateNoteScreenState extends State<CreateNoteScreen> {
   // Widgets
   @override
   Widget build(BuildContext context) {
+    final cloudProvider = Provider.of<CloudProvider>(context);
     return Scaffold(
       appBar: AppBar(title: const Text('A D D   N O T E S')),
       body: Padding(
@@ -220,7 +227,9 @@ class _CreateNoteScreenState extends State<CreateNoteScreen> {
               else
                 Image.file(File(imageFile!.path), height: 300),
               CustomButton(
-                onClick: formSubmit,
+                onClick: () {
+                  formSubmit(cloudProvider.isSync);
+                },
                 label: 'Add',
                 icon: Icons.add,
               ),
