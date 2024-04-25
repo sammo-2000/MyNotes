@@ -1,0 +1,115 @@
+import 'package:flutter/material.dart';
+import 'package:notes/providers/cloudProvider.dart';
+import 'package:notes/widgets/button.dart';
+import 'package:provider/provider.dart';
+
+class SyncToCloud extends StatelessWidget {
+  const SyncToCloud({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final cloudProvider = Provider.of<CloudProvider>(context);
+    if (cloudProvider.isSync) {
+      return CustomButton(
+        label: 'Synced To Cloud',
+        icon: Icons.cloud_done_rounded,
+        onClick: () {
+          cloudConfirmButton(
+            context,
+            'Keep Local Only',
+            'Are you sure you would like to stop using cloud? Doing so your data will only be stored locally on single device',
+            Colors.red,
+                () {
+              cloudProvider.setIsSync(false);
+              // TODO
+              // DELETE ALL CLOUD DATA
+              Navigator.pop(context);
+            },
+          );
+        },
+        color: Colors.green,
+      );
+    }
+    return CustomButton(
+      label: 'Local Only',
+      icon: Icons.cloud_off,
+      onClick: () {
+        cloudConfirmButton(
+          context,
+          'Sync To Cloud',
+          'Are you sure you would like to start using cloud? Doing so your data will be stored online and accessible on all your devices',
+          Colors.green,
+              () {
+            cloudProvider.setIsSync(true);
+            // TODO
+            // DOWNLOAD FROM CLOUD ANY WHICH IS NOT ON LOCAL DB
+            // UPLOAD ANY NOTE NOT IN CLOUD
+            Navigator.pop(context);
+          },
+        );
+      },
+      color: Colors.red,
+    );
+  }
+}
+
+Future<dynamic> cloudConfirmButton(
+    BuildContext context,
+    String title,
+    String body,
+    Color color,
+    void Function()? onConfirm,
+    ) {
+  return showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: Text(
+          title,
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.blue,
+          ),
+        ),
+        content: Text(
+          body,
+          style: const TextStyle(
+            fontSize: 16,
+          ),
+        ),
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        elevation: 4,
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text(
+              'Cancel',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.blue,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: onConfirm,
+            child: Text(
+              'Confirm',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
+            ),
+          ),
+        ],
+      );
+    },
+  );
+}

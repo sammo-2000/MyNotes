@@ -109,8 +109,6 @@ class _CreateEditNoteScreenState extends State<CreateEditNoteScreen> {
     await MyDatabase.updateNote(note);
     if (isSync) {
       MyFireBase myFirebase = MyFireBase();
-      // TODO
-      // CREATE UPDATE FUNCTION
       myFirebase.update(note);
     }
     // Add The Note To state
