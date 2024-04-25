@@ -98,7 +98,14 @@ class _SignInScreenState extends State<SignInScreen> {
             CustomInput(
               controller: passwordController,
               label: 'Password',
+              obscureText: true,
             ),
+            if (errorMessege == "") const SizedBox() else CustomButton(
+                    label: errorMessege,
+                    icon: Icons.error,
+                    color: Colors.red,
+                    onClick: () {},
+                  ),
             if (loginPage)
               Column(
                 children: [

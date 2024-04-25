@@ -33,8 +33,12 @@ class NoteProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void editNote(Note oldNote, Note newNote) {
-    // TODO
-    notifyListeners();
+  void editNote(Note note) {
+    int index = _notes.indexWhere((existingNote) => existingNote.id == note.id);
+    if (index != -1) {
+      _notes[index] = note;
+      notifyListeners();
+    }
   }
+
 }

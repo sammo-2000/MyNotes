@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CloudProvider extends ChangeNotifier {
-  bool _isSyncToCloud = false;
+  bool _isSyncToCloud = true;
 
   bool get isSync => _isSyncToCloud;
 
