@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:notes/database/firebase.dart';
 import 'package:notes/database/sqlite.dart';
+import 'package:notes/database/syncCloud.dart';
 import 'package:notes/models/noteModel.dart';
 import 'package:notes/providers/notesProvider.dart';
+import 'package:notes/providers/cloudProvider.dart';
 import 'package:notes/screens/createEditNoteScreen.dart';
 import 'package:notes/screens/detailNoteScreen.dart';
 import 'package:notes/screens/settingsScreen.dart';
@@ -19,16 +22,23 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   List<Note>? noteList;
   late NoteProvider notesProvider;
+  late CloudProvider cloudProvider;
+
 
   @override
   void initState() {
     super.initState();
     notesProvider = Provider.of<NoteProvider>(context, listen: false);
+    cloudProvider = Provider.of<CloudProvider>(context, listen: false);
     setStateInitial();
   }
 
   void setStateInitial() {
-    MyDatabase.getAllNotes().then((notes) {
+    MyDatabase.getAllNotes().then((notes) async {
+      MyFireBase fireBase = MyFireBase();
+      bool isSync = await fireBase.getCloudSettings();
+      cloudProvider.setIsSync(isSync);
+      await syncBetweenCloud(context);
       setState(() {
         if (notes != null && notes.isNotEmpty) {
           noteList = notes;
@@ -39,8 +49,6 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       });
     });
-    // TODO
-    // IF USER HAS SYNC ON, GET ALL NOTES FROM DB
   }
 
   void openCreateEditScreen(BuildContext context) {

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:notes/models/noteModel.dart';
 
 class MyFireBase {
@@ -25,5 +26,38 @@ class MyFireBase {
         .doc(id)
         .delete()
         .catchError((error) => print("Failed to delete note: $error"));
+  }
+
+  Future<void> setCloudSettings(bool cloudValue) async {
+    CollectionReference cloud = FirebaseFirestore.instance.collection('cloud');
+    User? user = FirebaseAuth.instance.currentUser;
+    String? email = user?.email;
+
+    if (email == null || email.isEmpty) return;
+
+    DocumentSnapshot<Map<String, dynamic>> docSnapshot =
+        await cloud.doc(email).get() as DocumentSnapshot<Map<String, dynamic>>;
+
+    if (docSnapshot.exists) {
+      await cloud.doc(email).update({'cloud': cloudValue});
+    } else {
+      await cloud.doc(email).set({'cloud': cloudValue});
+    }
+  }
+
+  Future<bool> getCloudSettings() async {
+    CollectionReference cloud = FirebaseFirestore.instance.collection('cloud');
+    User? user = FirebaseAuth.instance.currentUser;
+    String? email = user?.email;
+
+    if (email == null || email.isEmpty) return false;
+
+    DocumentSnapshot<Map<String, dynamic>> docSnapshot = await cloud.doc(email).get() as DocumentSnapshot<Map<String, dynamic>>;
+
+    if (docSnapshot.exists) {
+      return docSnapshot.data()?['cloud'] ?? false;
+    } else {
+      return false;
+    }
   }
 }
