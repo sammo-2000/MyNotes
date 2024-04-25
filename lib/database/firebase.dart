@@ -6,8 +6,8 @@ class MyFireBase {
 
   Future<void> add(Note note) async {
     return notes
-        .add(note.toMap())
-        .then((value) => print(value))
+        .doc(note!.id.toString())
+        .set(note.toMap())
         .catchError((e) => print(e));
   }
 
@@ -20,6 +20,10 @@ class MyFireBase {
   }
 
   Future<void> delete(Note note) async {
-    // TODO
+    String id = note.id.toString();
+    return notes
+        .doc(id)
+        .delete()
+        .catchError((error) => print("Failed to delete note: $error"));
   }
 }

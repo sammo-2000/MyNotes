@@ -40,8 +40,17 @@ class _CreateEditNoteScreenState extends State<CreateEditNoteScreen> {
   // Handle edit
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    if (widget.createPage == false) {
+      titleController.text = widget.note!.title;
+      noteController.text = widget.note!.note;
+      widget.note!.filePath != null ? filePath = widget.note!.filePath : "";
+      widget.note!.reminderDateTime != null
+          ? reminderDateTime = widget.note!.reminderDateTime
+          : "";
+      createAt = widget.note!.createAt;
+      widget.note!.editAt != null ? editAt = widget.note!.editAt : "";
+    }
   }
 
   // Handle form submit
@@ -49,7 +58,7 @@ class _CreateEditNoteScreenState extends State<CreateEditNoteScreen> {
     try {
       if (titleController.text.isEmpty) throw 'Title is required';
       if (noteController.text.isEmpty) throw 'Note is required';
-      addImage();
+      await addImage();
       if (widget.createPage == true) {
         await createNote(isSync, noteProvider);
       } else {
@@ -134,17 +143,13 @@ class _CreateEditNoteScreenState extends State<CreateEditNoteScreen> {
     // Save the image
     File(imageFile!.path).copy(imagePath);
     // Return the path name to store in DB
-    filePath = now.toString();
+    filePath = imagePath;
   }
 
   // Delete image from storage
-  Future<void> deleteImage(String path) async {
+  Future<void> deleteImage(String imagePath) async {
     // Check image path is not empty
-    if (path.isNotEmpty) {
-      // Get app DIR to get the image
-      Directory appDocDir = await getApplicationDocumentsDirectory();
-      // Create image path
-      String imagePath = '${appDocDir.path}/$path';
+    if (imagePath.isNotEmpty) {
       // Get the image from storage
       File imageFile = File(imagePath);
       // Check if image exists
@@ -343,7 +348,7 @@ class _CreateEditNoteScreenState extends State<CreateEditNoteScreen> {
 Widget showImage(String? filePath, XFile? imageFile) {
   if (filePath == null && imageFile == null) {
     // Display nothing if there are no images
-    return const SizedBox();
+    return const Text('No IMAGE');
   } else if (filePath != null && imageFile == null) {
     // Display older images if it exists and no new image is selected
     return Row(
