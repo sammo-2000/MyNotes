@@ -3,7 +3,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 class MyDatabase {
-  static int version = 1;
+  static int version = 3;
   static String dbName = 'note.db';
   static String sql = '''
     CREATE TABLE notes (
@@ -19,14 +19,23 @@ class MyDatabase {
 
   // Connect to DB
   static Future<Database> getDB() async {
-    return openDatabase(
-      join(await getDatabasesPath(), dbName),
-      onCreate: (db, version) async {
-        await db.execute(sql);
-        print('New DB Created');
-      },
-      version: version,
-    );
+    try {
+      return openDatabase(
+        join(await getDatabasesPath(), dbName),
+        onCreate: (db, version) async {
+          await db.execute(sql);
+        },
+        onUpgrade: (db, oldVersion, newVersion) async {
+          if (oldVersion < 3) {
+            await db.execute('ALTER TABLE notes ADD COLUMN email TEXT');
+          }
+        },
+        version: version,
+      );
+    } catch (e) {
+      print('Error opening database: $e');
+      throw 'Error opening database: $e';
+    }
   }
 
   // Create note

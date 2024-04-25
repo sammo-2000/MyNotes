@@ -22,7 +22,7 @@ class _ListNoteFireBaseState extends State<ListNoteFireBase> {
     user = FirebaseAuth.instance.currentUser;
     notesStream = FirebaseFirestore.instance
         .collection('notes')
-        .where('uid', isEqualTo: user!.uid)
+        .where('email', isEqualTo: user!.email)
         .snapshots();
   }
 
@@ -37,22 +37,35 @@ class _ListNoteFireBaseState extends State<ListNoteFireBase> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Text("Loading");
         }
-        return ListView(
-          children: snapshot.data!.docs.map((DocumentSnapshot document) {
-            Map<String, dynamic> data =
-                document.data()! as Map<String, dynamic>;
-            Note note = Note.fromMap(data);
-            return GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ViewNoteScreen(myNote: note),
-                    ),
+        return snapshot.hasData && snapshot.data!.docs.isNotEmpty
+            ? ListView(
+                children: snapshot.data!.docs.map((DocumentSnapshot document) {
+                  Map<String, dynamic> data =
+                      document.data()! as Map<String, dynamic>;
+                  Note note = Note.fromMap(data);
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ViewNoteScreen(myNote: note),
+                        ),
+                      );
+                    },
+                    child: NoteCard(note: note),
                   );
-                },
-                child: NoteCard(note: note));
-          }).toList(),
+                }).toList(),
+              )
+            : const Center(
+          child: Text(
+            'N O   N O T E S   F O U N D',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.grey,
+              fontSize: 30.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         );
       },
     );

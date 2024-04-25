@@ -1,6 +1,6 @@
 class Note {
-  String? uid;
-  final int? id;
+  String? email;
+  int? id;
   final String title;
   final String note;
   final String? filePath;
@@ -9,7 +9,7 @@ class Note {
   final DateTime? editAt;
 
   Note({
-    this.uid,
+    this.email,
     this.id,
     required this.title,
     required this.note,
@@ -21,6 +21,7 @@ class Note {
 
   factory Note.fromMap(Map<String, dynamic> myMap) {
     return Note(
+      email: myMap['email'],
       id: myMap['id'],
       title: myMap['title'],
       note: myMap['note'],
@@ -36,6 +37,7 @@ class Note {
 
   Map<String, dynamic> toMap() {
     return {
+      'email': email,
       'id': id,
       'title': title,
       'note': note,

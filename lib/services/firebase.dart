@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:notes/models/note.dart';
 
-class FireBase {
+class MyFireBase {
   CollectionReference notes = FirebaseFirestore.instance.collection('notes');
 
   Future<void> add(Note note) async {

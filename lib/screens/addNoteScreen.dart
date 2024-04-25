@@ -1,9 +1,11 @@
 import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:notes/models/note.dart';
 import 'package:notes/provider/cloudProvider.dart';
 import 'package:notes/screens/listNoteScreen.dart';
 import 'package:notes/services/dbConnect.dart';
+import 'package:notes/services/firebase.dart';
 import 'package:notes/widget/button.dart';
 import 'package:notes/widget/dialog.dart';
 import 'package:notes/widget/form/input.dart';
@@ -45,10 +47,23 @@ class _CreateNoteScreenState extends State<CreateNoteScreen> {
 
   Future<void> formSubmit(bool isSyncToCloud) async {
     try {
+      final User? user = FirebaseAuth.instance.currentUser;
+
+      if (user == null) {
+        throw 'User not authenticated';
+      }
+
+      if (user.email == null) {
+        throw 'User email not available';
+      }
+
+      print('User email: ${user.email}');
+
       validateFields();
       await saveImage();
 
       Note newNote = Note(
+        email: user!.email,
         title: titleController.text,
         note: noteController.text,
         filePath: filePath,
@@ -56,7 +71,13 @@ class _CreateNoteScreenState extends State<CreateNoteScreen> {
         createAt: DateTime.now(),
       );
 
-      MyDatabase.addNote(newNote);
+      int noteID = await MyDatabase.addNote(newNote);
+
+      if (isSyncToCloud) {
+        newNote.id = noteID;
+        MyFireBase myFirebase = MyFireBase();
+        myFirebase.add(newNote);
+      }
 
       redirect();
       return;
