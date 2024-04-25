@@ -1,62 +1,83 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:notes/database/firebase.dart';
 import 'package:notes/database/sqlite.dart';
 import 'package:notes/models/noteModel.dart';
-import 'package:notes/providers/cloudProvider.dart';
-import 'package:provider/provider.dart';
 
-Future<void> syncBetweenCloud(BuildContext context) async {
-  final cloudProvider = Provider.of<CloudProvider>(context, listen: false);
-  if (cloudProvider.isSync == false) return;
-
+Future<void> syncBetweenCloud(var notesProvider) async {
   MyFireBase fireBase = MyFireBase();
 
   List<Note> localNotes = await getLocalData();
   List<Note> cloudNotes = await getCloudData();
 
-  for (Note localNote in localNotes) {
-    bool found = false;
-    for (Note cloudNote in cloudNotes) {
-      if (localNote.id == cloudNote.id) {
-        found = true;
-        if (localNote.editAt!.isAfter(cloudNote.editAt!)) {
-          // Update cloudNote with localNote
-          await fireBase.update(localNote);
-        } else if (localNote.editAt!.isBefore(cloudNote.editAt!)) {
-          // Update localNote with cloudNote
-          await MyDatabase.updateNote(cloudNote);
+  // LOOP CLOUD NOTE
+  for (Note cloudNote in cloudNotes) {
+    bool isOnLocal = false;
+    // LOOP LOCAL NOTE
+    for (final localNote in localNotes) {
+      // CHECK IF CLOUD NOTE EXIST LOCALLY
+      if (cloudNote.id == localNote.id) {
+        // NOTE EXISTS LOCALLY
+        isOnLocal = true;
+        // CHECK IF THERE IS AN UPDATE IN CLOUD
+        if (cloudNote.editAt == null && localNote.editAt == null) {
+          // NOTE HAVE NO EDIT, EXIST
+          break;
+        } else {
+          // NOTE HAVE AN EDIT
+          // IF ONE HAS NO EDIT & OTHER DO UPDATE IT
+          if (cloudNote.editAt != null && localNote.editAt == null) {
+            // CLOUD NOTE HAD EDIT
+            // LOCAL NOTE HAD NO EDIT
+            // UPDATE LOCAL NOTE
+            MyDatabase.updateNote(cloudNote);
+            break;
+          } else if (cloudNote.editAt == null && localNote.editAt != null) {
+            // CLOUD NOTE HAD NO EDIT
+            // LOCAL NOTE HAD EDIT
+            // UPDATE CLOUD NOTE
+            fireBase.update(localNote);
+            break;
+          } else {
+            // BOTH HAD EDIT, CHECK ONE IS LATEST
+            if (cloudNote.editAt!.isAfter(localNote.editAt!)) {
+              // CLOUD NOTE HAS LATEST EDIT
+              MyDatabase.updateNote(cloudNote);
+              break;
+            } else {
+              // LOCAL HAS LATEST EDIT
+              fireBase.update(localNote);
+              break;
+            }
+          }
         }
-        break;
       }
     }
-    if (!found) {
-      // Add localNote to cloud
-      for (Note localNote in localNotes) {
-        await fireBase.add(localNote);
-      }
+    if (isOnLocal == false) {
+      // NOTE DOES NOT EXIST LOCALLY
+      // ADD CLOUD NOTE TO LOCAL
+      await MyDatabase.addNote(cloudNote);
     }
   }
 
-  for (Note cloudNote in cloudNotes) {
-    bool found = false;
-    for (Note localNote in localNotes) {
-      if (cloudNote.id == localNote.id) {
-        found = true;
+  // CHECK WHICH DATABASE IS ON LOCAL ONLY AND UPLOAD TO REMOTE
+  // LOOP LOCAL NOTES
+  for (final localNote in localNotes) {
+    bool isOnCloud = false;
+    // LOOP REMOTE NOTES
+    for (final cloudNote in cloudNotes) {
+      // CHECK IF IT EXISTS ON CLOUD
+      if (localNote.id == cloudNote.id) {
+        // NOTE EXISTS ON CLOUD
+        isOnCloud = true;
         break;
       }
     }
-    if (!found) {
-      // Add cloudNote to local
-      for (Note cloudNote in cloudNotes) {
-        await MyDatabase.addNote(cloudNote);
-      }
+    if (isOnCloud == false) {
+      fireBase.add(localNote);
     }
   }
 }
-
-Future<void> deleteFromCloud() async {}
 
 Future<List<Note>> getLocalData() async {
   List<Note>? notes = await MyDatabase.getAllNotes();
@@ -67,31 +88,18 @@ Future<List<Note>> getLocalData() async {
 Future<List<Note>> getCloudData() async {
   CollectionReference notes = FirebaseFirestore.instance.collection('notes');
   User? user = FirebaseAuth.instance.currentUser;
-  String? email = user?.email;
-  if (email == null || email.isEmpty) return [];
-  DocumentSnapshot<Map<String, dynamic>> docSnapshot =
-      await notes.doc(email).get() as DocumentSnapshot<Map<String, dynamic>>;
-  if (docSnapshot.exists) {
-    List<Note> listOfNotes = (docSnapshot.data() as List<dynamic>)
-        .map((note) => Note.fromMap(note))
+  if (user == null) return [];
+  String email = user.email!;
+  if (email.isEmpty) return [];
+
+  QuerySnapshot querySnapshot =
+      await notes.where('email', isEqualTo: email).get();
+  if (querySnapshot.docs.isNotEmpty) {
+    List<Note> listOfNotes = querySnapshot.docs
+        .map((doc) => Note.fromMap(doc.data() as Map<String, dynamic>? ?? {}))
         .toList();
     return listOfNotes;
   } else {
     return [];
   }
 }
-
-// CollectionReference cloud = FirebaseFirestore.instance.collection('cloud');
-// User? user = FirebaseAuth.instance.currentUser;
-// String? email = user?.email;
-//
-// if (email == null || email.isEmpty) return false;
-//
-// DocumentSnapshot<Map<String, dynamic>> docSnapshot = await cloud.doc(email).get() as DocumentSnapshot<Map<String, dynamic>>;
-//
-// if (docSnapshot.exists) {
-// return docSnapshot.data()?['cloud'] ?? false;
-// } else {
-// return false;
-// }
-// }

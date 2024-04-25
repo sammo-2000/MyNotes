@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:notes/database/firebase.dart';
 import 'package:notes/database/syncCloud.dart';
 import 'package:notes/providers/cloudProvider.dart';
+import 'package:notes/providers/notesProvider.dart';
 import 'package:notes/widgets/button.dart';
 import 'package:provider/provider.dart';
 
@@ -11,6 +12,7 @@ class SyncToCloud extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cloudProvider = Provider.of<CloudProvider>(context);
+    final notesProvider = Provider.of<NoteProvider>(context);
     if (cloudProvider.isSync) {
       return CustomButton(
         label: 'Synced To Cloud',
@@ -25,8 +27,6 @@ class SyncToCloud extends StatelessWidget {
               cloudProvider.setIsSync(false);
               MyFireBase fireBase = MyFireBase();
               fireBase.setCloudSettings(false);
-              // TODO
-              // DELETE ALL CLOUD DATA
               Navigator.pop(context);
             },
           );
@@ -44,11 +44,10 @@ class SyncToCloud extends StatelessWidget {
           'Are you sure you would like to start using cloud? Doing so your data will be stored online and accessible on all your devices',
           Colors.green,
               () async {
-            cloudProvider.setIsSync(true);
+            await cloudProvider.setIsSync(true);
+            await syncBetweenCloud(notesProvider);
             MyFireBase fireBase = MyFireBase();
-            fireBase.setCloudSettings(true);
-            // TODO
-            await syncBetweenCloud(context);
+            await fireBase.setCloudSettings(true);
             Navigator.pop(context);
           },
         );

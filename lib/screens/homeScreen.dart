@@ -24,21 +24,22 @@ class _HomeScreenState extends State<HomeScreen> {
   late NoteProvider notesProvider;
   late CloudProvider cloudProvider;
 
-
   @override
   void initState() {
     super.initState();
     notesProvider = Provider.of<NoteProvider>(context, listen: false);
     cloudProvider = Provider.of<CloudProvider>(context, listen: false);
-    setStateInitial();
+    setStateInitial(notesProvider, cloudProvider);
   }
 
-  void setStateInitial() {
+  void setStateInitial(var notesProvider, var cloudProvider) {
     MyDatabase.getAllNotes().then((notes) async {
       MyFireBase fireBase = MyFireBase();
       bool isSync = await fireBase.getCloudSettings();
-      cloudProvider.setIsSync(isSync);
-      await syncBetweenCloud(context);
+      await cloudProvider.setIsSync(isSync);
+      if (isSync == true) {
+        await syncBetweenCloud(notesProvider);
+      }
       setState(() {
         if (notes != null && notes.isNotEmpty) {
           noteList = notes;
@@ -78,7 +79,8 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Colors.blue,
         child: const Icon(Icons.add, color: Colors.white),
       ),
-      body: notes.isEmpty ? noNotesFounds(context) : displayNotes(notes, context),
+      body:
+          notes.isEmpty ? noNotesFounds(context) : displayNotes(notes, context),
     );
   }
 }

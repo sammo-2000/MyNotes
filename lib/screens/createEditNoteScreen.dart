@@ -107,7 +107,7 @@ class _CreateEditNoteScreenState extends State<CreateEditNoteScreen> {
     );
     // Save To Local Storage
     await MyDatabase.updateNote(note);
-    if (isSync) {
+    if (isSync == true) {
       MyFireBase myFirebase = MyFireBase();
       myFirebase.update(note);
     }
