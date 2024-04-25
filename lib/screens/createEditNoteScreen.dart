@@ -273,8 +273,8 @@ class _CreateEditNoteScreenState extends State<CreateEditNoteScreen> {
     return Scaffold(
       appBar: AppBar(
           title: widget.createPage
-              ? const Text('C R E A T E   N O T E S')
-              : const Text('E D I T   N O T E S')),
+              ? const Text('C R E A T E   N O T E')
+              : const Text('E D I T   N O T E')),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(8.0),

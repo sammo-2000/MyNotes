@@ -95,7 +95,7 @@ Widget displayNotes(List<Note> notes) {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => CreateEditNoteScreen(createPage: false, note: note),
+              builder: (context) => DetailNoteScreen(note: note),
             ),
           );
         },
