@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:notes/models/note.dart';
+import 'package:notes/models/noteModel.dart';
 
 class NoteProvider extends ChangeNotifier {
   List<Note> _notes = [];
@@ -22,7 +22,6 @@ class NoteProvider extends ChangeNotifier {
     });
     notifyListeners();
   }
-
 
   void addNote(Note note) {
     _notes.add(note);

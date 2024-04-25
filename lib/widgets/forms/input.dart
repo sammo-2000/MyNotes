@@ -23,10 +23,10 @@ class CustomInput extends StatelessWidget {
         textAlign: center == true ? TextAlign.center : TextAlign.start,
         decoration: label != null
             ? InputDecoration(
-                hintText: label,
-                border: const OutlineInputBorder(),
-                labelText: label,
-              )
+          hintText: label,
+          border: const OutlineInputBorder(),
+          labelText: label,
+        )
             : const InputDecoration(border: OutlineInputBorder()),
       ),
     );

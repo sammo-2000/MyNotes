@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:notes/screens/listNoteScreen.dart';
-import 'package:notes/screens/signInScreen.dart';
+import 'package:notes/screens/homeScreen.dart';
+import 'package:notes/screens/signIn.dart';
 
 class AuthGate extends StatefulWidget {
   const AuthGate({super.key});
@@ -17,7 +17,7 @@ class _AuthGateState extends State<AuthGate> {
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return const ListNoteScreen();
+          return const HomeScreen();
         } else {
           return const SignInScreen();
         }
