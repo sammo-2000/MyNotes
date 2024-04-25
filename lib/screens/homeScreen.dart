@@ -40,9 +40,9 @@ class _HomeScreenState extends State<HomeScreen> {
       if (isSync == true) {
         await syncBetweenCloud(notesProvider);
       }
-      setState(() {
+      setState(() async {
         if (notes != null && notes.isNotEmpty) {
-          noteList = notes;
+          noteList = await MyDatabase.getAllNotes();
           notesProvider.setNotes(noteList!);
         } else {
           noteList = [];

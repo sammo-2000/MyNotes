@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:notes/database/firebase.dart';
+import 'package:notes/database/sqlite.dart';
 import 'package:notes/database/syncCloud.dart';
+import 'package:notes/models/noteModel.dart';
 import 'package:notes/providers/cloudProvider.dart';
 import 'package:notes/providers/notesProvider.dart';
 import 'package:notes/widgets/button.dart';
 import 'package:provider/provider.dart';
 
-class SyncToCloud extends StatelessWidget {
+class SyncToCloud extends StatefulWidget {
   const SyncToCloud({super.key});
 
+  @override
+  State<SyncToCloud> createState() => _SyncToCloudState();
+}
+
+class _SyncToCloudState extends State<SyncToCloud> {
   @override
   Widget build(BuildContext context) {
     final cloudProvider = Provider.of<CloudProvider>(context);
@@ -47,6 +54,8 @@ class SyncToCloud extends StatelessWidget {
             await cloudProvider.setIsSync(true);
             await syncBetweenCloud(notesProvider);
             MyFireBase fireBase = MyFireBase();
+            List<Note>? noteList = await MyDatabase.getAllNotes();
+            notesProvider.setNotes(noteList!);
             await fireBase.setCloudSettings(true);
             Navigator.pop(context);
           },
