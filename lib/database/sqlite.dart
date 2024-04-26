@@ -14,6 +14,7 @@ class MyDatabase {
       reminderDateTime TEXT,
       createAt TEXT,
       editAt TEXT
+      email TEXT,
     );
   ''';
 
