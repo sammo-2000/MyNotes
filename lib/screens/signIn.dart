@@ -85,6 +85,7 @@ class _SignInScreenState extends State<SignInScreen> {
       appBar: AppBar(
         title:
             loginPage ? const Text('L O G I N') : const Text('S I G N    U P '),
+        automaticallyImplyLeading: false,
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -100,12 +101,15 @@ class _SignInScreenState extends State<SignInScreen> {
               label: 'Password',
               obscureText: true,
             ),
-            if (errorMessege == "") const SizedBox() else CustomButton(
-                    label: errorMessege,
-                    icon: Icons.error,
-                    color: Colors.red,
-                    onClick: () {},
-                  ),
+            if (errorMessege == "")
+              const SizedBox()
+            else
+              CustomButton(
+                label: errorMessege,
+                icon: Icons.error,
+                color: Colors.red,
+                onClick: () {},
+              ),
             if (loginPage)
               Column(
                 children: [

@@ -125,9 +125,6 @@ Widget displayNotes(List<Note> notes, BuildContext context) {
             itemBuilder: (context, index) {
               Note note = notes[index];
               return GestureDetector(
-                onLongPress: () {
-                  // TODO
-                },
                 onTap: () {
                   Navigator.push(
                     context,
