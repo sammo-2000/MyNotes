@@ -3,7 +3,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 class MyDatabase {
-  static int version = 3;
+  static int version = 1;
   static String dbName = 'note.db';
   static String sql = '''
     CREATE TABLE notes (
@@ -13,31 +13,43 @@ class MyDatabase {
       filePath TEXT,
       reminderDateTime TEXT,
       createAt TEXT,
-      editAt TEXT
-      email TEXT,
+      editAt TEXT,
+      email TEXT
     );
   ''';
 
   // Connect to DB
   static Future<Database> getDB() async {
     try {
-      return openDatabase(
-        join(await getDatabasesPath(), dbName),
+      final databasePath = await getDatabasesPath();
+      final database = await openDatabase(
+        join(databasePath, dbName),
         onCreate: (db, version) async {
+          print('Creating new table');
           await db.execute(sql);
         },
-        onUpgrade: (db, oldVersion, newVersion) async {
-          if (oldVersion < 3) {
-            await db.execute('ALTER TABLE notes ADD COLUMN email TEXT');
-          }
-        },
+        // onUpgrade: (db, oldVersion, newVersion) async {
+        //   if (oldVersion < 5) {
+        //     await db.execute('DROP TABLE IF EXISTS notes');
+        //   }
+        // },
         version: version,
       );
+
+      // Check if the 'notes' table exists
+      final tables = await database.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='notes'");
+      if (tables.isEmpty) {
+        print('Notes table does not exist. Creating it now.');
+        await database.execute(sql);
+      }
+
+      return database;
     } catch (e) {
       print('Error opening database: $e');
       throw 'Error opening database: $e';
     }
   }
+
 
   // Create note
   static Future<int> addNote(Note note) async {
