@@ -9,6 +9,7 @@ import 'package:notes/providers/notesProvider.dart';
 import 'package:notes/screens/homeScreen.dart';
 import 'package:notes/widgets/button.dart';
 import 'package:notes/widgets/forms/input.dart';
+import 'package:notes/widgets/forms/text.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:intl/intl.dart';
@@ -250,9 +251,7 @@ class _CreateEditNoteScreenState extends State<CreateEditNoteScreen> {
         context: context,
         firstDate: DateTime(now.year),
         lastDate: DateTime(2200),
-        initialDate: DateTime(
-          now.year.toInt(),
-        ),
+        initialDate: DateTime.now(),
       );
 
   Future<TimeOfDay?> pickTime(DateTime now) => showTimePicker(
@@ -321,7 +320,7 @@ class _CreateEditNoteScreenState extends State<CreateEditNoteScreen> {
                 ],
               ),
               CustomInput(controller: titleController, label: 'Title'),
-              CustomInput(controller: noteController, label: 'Note'),
+              CustomText(controller: noteController, label: 'Note'),
               showImage(filePath, imageFile),
               CustomButton(
                 label: widget.createPage

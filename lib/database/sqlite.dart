@@ -1,4 +1,6 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:notes/models/noteModel.dart';
+import 'package:notes/services/notificationService.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -28,16 +30,12 @@ class MyDatabase {
           print('Creating new table');
           await db.execute(sql);
         },
-        // onUpgrade: (db, oldVersion, newVersion) async {
-        //   if (oldVersion < 5) {
-        //     await db.execute('DROP TABLE IF EXISTS notes');
-        //   }
-        // },
         version: version,
       );
 
       // Check if the 'notes' table exists
-      final tables = await database.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='notes'");
+      final tables = await database.rawQuery(
+          "SELECT name FROM sqlite_master WHERE type='table' AND name='notes'");
       if (tables.isEmpty) {
         print('Notes table does not exist. Creating it now.');
         await database.execute(sql);
@@ -50,9 +48,16 @@ class MyDatabase {
     }
   }
 
-
   // Create note
   static Future<int> addNote(Note note) async {
+    if (note.reminderDateTime != null) {
+      NotificationServices.displayNotification(
+        notificationTitle: note.title,
+        body: note.note,
+        scheduled: true,
+        time: note.reminderDateTime,
+      );
+    }
     final db = await getDB();
     return await db.insert(
       'notes',
