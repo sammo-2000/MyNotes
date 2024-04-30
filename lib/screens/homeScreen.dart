@@ -9,8 +9,11 @@ import 'package:notes/screens/createEditNoteScreen.dart';
 import 'package:notes/screens/detailNoteScreen.dart';
 import 'package:notes/screens/settingsScreen.dart';
 import 'package:notes/widgets/button.dart';
+import 'package:notes/widgets/dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'dart:io';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -113,7 +116,44 @@ Widget noNotesFounds(BuildContext context) {
   );
 }
 
+void deleteNote(BuildContext context, Note note, bool isSync) async {
+  try {
+    if (note.filePath != null) {
+      deleteImage(note.filePath!);
+    }
+    await MyDatabase.deleteNote(note);
+    if (isSync) {
+      MyFireBase firebase = MyFireBase();
+      await firebase.delete(note);
+    }
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const HomeScreen(),
+      ),
+    );
+  } catch (e) {
+    CustomDialog.show(
+      context,
+      'Error Deleting Note',
+      'Sorry, note was not deleted please try again',
+    );
+    debugPrint('ERROR DELETING NOTE');
+    debugPrint(e.toString());
+  }
+}
+
+Future<void> deleteImage(String imagePath) async {
+  if (imagePath.isNotEmpty) {
+    File imageFile = File(imagePath);
+    if (await imageFile.exists()) {
+      await imageFile.delete();
+    }
+  }
+}
+
 Widget displayNotes(List<Note> notes, BuildContext context) {
+  final cloudProvider = Provider.of<CloudProvider>(context);
   return Padding(
     padding: const EdgeInsets.all(8.0),
     child: Column(
@@ -124,16 +164,34 @@ Widget displayNotes(List<Note> notes, BuildContext context) {
             itemCount: notes.length,
             itemBuilder: (context, index) {
               Note note = notes[index];
-              return GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => DetailNoteScreen(note: note),
+              return Slidable(
+                endActionPane: ActionPane(
+                  motion: const DrawerMotion(),
+                  children: [
+                    SlidableAction(
+                      onPressed: (context) {
+                        deleteNote(context, note, cloudProvider.isSync);
+                      },
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                      icon: Icons.delete,
+                      label: 'Delete',
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(8.0)),
                     ),
-                  );
-                },
-                child: noteCard(note),
+                  ],
+                ),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DetailNoteScreen(note: note),
+                      ),
+                    );
+                  },
+                  child: noteCard(note),
+                ),
               );
             },
           ),
