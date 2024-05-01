@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:notes/models/noteModel.dart';
 import 'package:notes/services/notificationService.dart';
 import 'package:sqflite/sqflite.dart';
@@ -36,8 +37,22 @@ class MyDatabase {
       final tables = await database.rawQuery(
           "SELECT name FROM sqlite_master WHERE type='table' AND name='notes'");
       if (tables.isEmpty) {
-        print('Notes table does not exist. Creating it now.');
         await database.execute(sql);
+      } else {
+        // Check if 'notes' table is empty, add dummy data if needed
+        final countResult =
+            await database.rawQuery("SELECT COUNT(*) AS count FROM notes");
+        final count = Sqflite.firstIntValue(countResult);
+        if (count == 0) {
+          User? user = FirebaseAuth.instance.currentUser;
+          Note newNote = Note(
+            title: 'Dummy',
+            note: 'Dummy',
+            createAt: DateTime.now(),
+            email: user!.email,
+          );
+          MyDatabase.addNote(newNote);
+        }
       }
 
       return database;

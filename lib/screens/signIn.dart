@@ -23,20 +23,11 @@ class _SignInScreenState extends State<SignInScreen> {
     });
   }
 
-  // Handle email & password
-  void validateInfo() {
-    if (emailController.text.isEmpty) {
-      throw 'Email cannot be empty';
-    }
-    if (passwordController.text.isEmpty) {
-      throw 'Password cannot be empty';
-    }
-  }
-
   // Create new user
   void createUser() async {
     try {
-      validateInfo();
+      validateEmailAndPassword(
+          email: emailController.text, password: passwordController.text);
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: emailController.text,
         password: passwordController.text,
@@ -59,7 +50,8 @@ class _SignInScreenState extends State<SignInScreen> {
   // Login the user
   void loginUser() async {
     try {
-      validateInfo();
+      validateEmailAndPassword(
+          email: emailController.text, password: passwordController.text);
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: emailController.text,
         password: passwordController.text,
@@ -146,5 +138,29 @@ class _SignInScreenState extends State<SignInScreen> {
         ),
       ),
     );
+  }
+}
+
+void validateEmailAndPassword(
+    {required String email, required String password}) {
+  // Email validation regex pattern
+  final emailRegex =
+      RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+
+  // Check if email is empty
+  if (email.isEmpty) {
+    throw 'Email cannot be empty';
+  }
+  // Check if email format is valid
+  if (!emailRegex.hasMatch(email)) {
+    throw 'Invalid email format';
+  }
+  // Check if password is empty
+  if (password.isEmpty) {
+    throw 'Password cannot be empty';
+  }
+  // Check if password length is at least 6 characters
+  if (password.length < 6) {
+    throw 'Password must be at least 6 characters';
   }
 }
