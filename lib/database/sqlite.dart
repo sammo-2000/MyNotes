@@ -1,4 +1,3 @@
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:notes/models/noteModel.dart';
 import 'package:notes/services/notificationService.dart';
 import 'package:sqflite/sqflite.dart';

@@ -39,6 +39,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         home: const AuthGate(),
         theme: ThemeData(
+          fontFamily: 'OpenSans',
           primarySwatch: Colors.blue,
           appBarTheme: const AppBarTheme(
             color: Colors.blue,
