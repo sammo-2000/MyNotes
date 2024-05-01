@@ -39,6 +39,7 @@ class MyDatabase {
       if (tables.isEmpty) {
         await database.execute(sql);
       } else {
+        // ADDED THIS AS CURRENTLY THERE IS BUG IF THERE ARE 0 NOTES, THIS WILL PREVENT IT FROM HAPPENING
         // Check if 'notes' table is empty, add dummy data if needed
         final countResult =
             await database.rawQuery("SELECT COUNT(*) AS count FROM notes");

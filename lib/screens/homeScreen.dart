@@ -69,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final noteProvider = Provider.of<NoteProvider>(context);
-    // ADD THIS AS CURRENTLY THERE IS BUG IF THERE ARE 0 NOTES, THIS WILL PREVENT IT FROM HAPPENING
+    // ADDED THIS AS CURRENTLY THERE IS BUG IF THERE ARE 0 NOTES, THIS WILL PREVENT IT FROM HAPPENING
     List<Note> notes = noteProvider.getMyNotes.where((note) => note.title != 'Dummy').toList();
     return Scaffold(
       appBar: AppBar(
