@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:notes/models/noteModel.dart';
+import 'package:notes/screens/createEditNoteScreen.dart';
 import 'package:notes/services/notificationService.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -47,6 +48,7 @@ class MyDatabase {
         if (count == 0) {
           User? user = FirebaseAuth.instance.currentUser;
           Note newNote = Note(
+            id: 1,
             title: 'Dummy',
             note: 'Dummy',
             createAt: DateTime.now(),

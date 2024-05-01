@@ -14,6 +14,7 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'dart:math';
 
 class CreateEditNoteScreen extends StatefulWidget {
   final bool createPage;
@@ -55,7 +56,7 @@ class _CreateEditNoteScreenState extends State<CreateEditNoteScreen> {
   }
 
   // Handle form submit
-  Future<void> handleSubmit(bool isSync, var noteProvider ) async {
+  Future<void> handleSubmit(bool isSync, var noteProvider) async {
     try {
       if (titleController.text.isEmpty) throw 'Title is required';
       if (noteController.text.isEmpty) throw 'Note is required';
@@ -73,9 +74,34 @@ class _CreateEditNoteScreenState extends State<CreateEditNoteScreen> {
     }
   }
 
+  int generatorID() {
+    // Get current DateTime
+    DateTime now = DateTime.now();
+
+    // Extract components of DateTime
+    int year = now.year % 100;
+    int month = now.month;
+    int day = now.day;
+    int hour = now.hour;
+    int minute = now.minute;
+    int second = now.second;
+    int millisecond = now.millisecond;
+
+    // Generate a random number between 100,000 and 999,999
+    int randomPart = Random().nextInt(900000) + 100000;
+
+    // Combine all components into a single unique ID
+    int uniqueId =
+        int.parse('$year$month$day$hour$minute$second$millisecond$randomPart');
+
+    return uniqueId;
+  }
+
   Future<void> createNote(bool isSync, var noteProvider) async {
     final User? user = FirebaseAuth.instance.currentUser;
+    int newID = generatorID();
     Note note = Note(
+      id: newID,
       email: user!.email,
       title: titleController.text,
       note: noteController.text,
@@ -84,10 +110,8 @@ class _CreateEditNoteScreenState extends State<CreateEditNoteScreen> {
       createAt: DateTime.now(),
     );
     // Save To Local Storage
-    int noteID = await MyDatabase.addNote(note);
     if (isSync) {
       // Save To Cloud Storage
-      note.id = noteID;
       MyFireBase myFirebase = MyFireBase();
       myFirebase.add(note);
     }
@@ -328,10 +352,7 @@ class _CreateEditNoteScreenState extends State<CreateEditNoteScreen> {
                     : 'E D I T   N O T E S',
                 icon: widget.createPage ? Icons.add : Icons.edit,
                 onClick: () {
-                  handleSubmit(
-                    cloudProvider.isSync,
-                    noteProvider
-                  );
+                  handleSubmit(cloudProvider.isSync, noteProvider);
                 },
               )
             ],
