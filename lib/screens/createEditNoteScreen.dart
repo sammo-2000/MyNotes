@@ -74,7 +74,7 @@ class _CreateEditNoteScreenState extends State<CreateEditNoteScreen> {
     }
   }
 
-  int generatorID() {
+  Future<int> generatorID() async {
     // Get current DateTime
     DateTime now = DateTime.now();
 
@@ -99,7 +99,7 @@ class _CreateEditNoteScreenState extends State<CreateEditNoteScreen> {
 
   Future<void> createNote(bool isSync, var noteProvider) async {
     final User? user = FirebaseAuth.instance.currentUser;
-    int newID = generatorID();
+    int newID = await generatorID();
     Note note = Note(
       id: newID,
       email: user!.email,
@@ -110,6 +110,7 @@ class _CreateEditNoteScreenState extends State<CreateEditNoteScreen> {
       createAt: DateTime.now(),
     );
     // Save To Local Storage
+    await MyDatabase.addNote(note);
     if (isSync) {
       // Save To Cloud Storage
       MyFireBase myFirebase = MyFireBase();

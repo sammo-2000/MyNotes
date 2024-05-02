@@ -36,24 +36,25 @@ class _HomeScreenState extends State<HomeScreen> {
     setStateInitial(notesProvider, cloudProvider);
   }
 
-  void setStateInitial(var notesProvider, var cloudProvider) {
-    MyDatabase.getAllNotes().then((notes) async {
-      MyFireBase fireBase = MyFireBase();
-      bool isSync = await fireBase.getCloudSettings();
-      await cloudProvider.setIsSync(isSync);
-      if (isSync == true) {
-        await syncBetweenCloud(notesProvider);
-      }
-      setState(() async {
-        if (notes != null && notes.isNotEmpty) {
-          noteList = await MyDatabase.getAllNotes();
-          notesProvider.setNotes(noteList!);
-        } else {
-          noteList = [];
-          notesProvider.setNotes(noteList!);
-        }
+  Future<void> setStateInitial(var notesProvider, var cloudProvider) async {
+    MyFireBase fireBase = MyFireBase();
+    bool isSync = await fireBase.getCloudSettings();
+    await cloudProvider.setIsSync(isSync);
+    if (isSync == true) {
+      await syncBetweenCloud(notesProvider);
+    }
+    List<Note>? notes = await MyDatabase.getAllNotes();
+    if (notes != null && notes.isNotEmpty) {
+      setState(() {
+        noteList = notes;
+        notesProvider.setNotes(noteList!);
       });
-    });
+    } else {
+      setState(() {
+        noteList = [];
+        notesProvider.setNotes(noteList!);
+      });
+    }
   }
 
   void openCreateEditScreen(BuildContext context) {
@@ -71,7 +72,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final noteProvider = Provider.of<NoteProvider>(context);
     // ADDED THIS AS CURRENTLY THERE IS BUG IF THERE ARE 0 NOTES, THIS WILL PREVENT IT FROM HAPPENING
-    List<Note> notes = noteProvider.getMyNotes.where((note) => note.title != 'Dummy').toList();
+    // List<Note> notes = noteProvider.getMyNotes;
+    List<Note> notes =
+        noteProvider.getMyNotes.where((note) => note.title != 'Dummy').toList();
     return Scaffold(
       appBar: AppBar(
         title: const Text('M Y   N O T E S'),
@@ -204,33 +207,29 @@ Widget displayNotes(List<Note> notes, BuildContext context) {
 }
 
 Widget noteCard(Note note) {
-  return Container(
-    margin: const EdgeInsets.symmetric(vertical: 3.0),
-    child: Card(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(note.title),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text(
-                  DateFormat('MMMM dd, yyyy - hh:mm a')
-                      // Show edit date, if the note never been edited show create date
-                      .format(
-                          note.editAt == null ? note.createAt! : note.editAt!)
-                      .toString(),
-                  style: const TextStyle(
-                    color: Colors.grey,
-                    fontSize: 12.0,
-                  ),
+  return Card(
+    child: Padding(
+      padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(note.title),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(
+                DateFormat('MMMM dd, yyyy - hh:mm a')
+                    // Show edit date, if the note never been edited show create date
+                    .format(note.editAt == null ? note.createAt! : note.editAt!)
+                    .toString(),
+                style: const TextStyle(
+                  color: Colors.grey,
+                  fontSize: 12.0,
                 ),
-              ],
-            ),
-          ],
-        ),
+              ),
+            ],
+          ),
+        ],
       ),
     ),
   );
