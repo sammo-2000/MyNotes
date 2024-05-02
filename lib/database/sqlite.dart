@@ -1,6 +1,6 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:notes/models/noteModel.dart';
-import 'package:notes/screens/createEditNoteScreen.dart';
 import 'package:notes/services/notificationService.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -75,6 +75,8 @@ class MyDatabase {
         time: note.reminderDateTime,
       );
     }
+    final player = AudioPlayer();
+    await player.play(AssetSource('new.mp3'));
     final db = await getDB();
     return await db.insert(
       'notes',
@@ -85,6 +87,8 @@ class MyDatabase {
 
   // Update note
   static Future<int> updateNote(Note note) async {
+    final player = AudioPlayer();
+    await player.play(AssetSource('new.mp3'));
     final db = await getDB();
     return await db.update(
       'notes',
@@ -98,6 +102,8 @@ class MyDatabase {
   // Delete note
   static Future<int> deleteNote(Note note) async {
     final db = await getDB();
+    final player = AudioPlayer();
+    await player.play(AssetSource('bin.mp3'));
     return await db.delete(
       'notes',
       where: 'id = ?',
